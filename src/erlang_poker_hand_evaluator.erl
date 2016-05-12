@@ -50,9 +50,13 @@ card_value(Face, Suit) ->
 
 -ifdef(TEST).
 
-base2_str(CardBits) -> lists:concat(io_lib:format("~.2B", binary_to_list(CardBits))).
+byte_string(ByteValue) -> io_lib:format("~.2B", [ByteValue]).
+padded_bytes(ByteStrings) -> io_lib:format("~8..0s", [ByteStrings]).
+
+base2_str(CardBits) -> ByteStrings = lists:map(fun byte_string/1, binary_to_list(CardBits)),
+  lists:flatten(padded_bytes(ByteStrings)).
 
 card_representation_test() ->
-  ?assert("100101" == base2_str(card_value("K", "♦"))).
+  ?assertEqual("00100101", base2_str(card_value("K", "♦"))).
 
 -endif.
